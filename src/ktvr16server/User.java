@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -21,9 +19,10 @@ public class User implements Runnable{
     Socket sc;
     PrintWriter pw;
     BufferedReader br;
-    String line;
+    String line="";
     Work work;
-    String name;
+    String name="";
+    boolean f=true;
 
     public User(Socket socket, Work work) throws IOException {
         this.sc = socket;
@@ -35,13 +34,9 @@ public class User implements Runnable{
 
     @Override
     public void run() {
-        try {
-            pw.println("Your name, please: ");
-            name = br.readLine();
-            work.add(this);
-        } catch (IOException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, "Error input/output", ex);
-        }
+        pw.println("Your name, please: ");
+        // name = br.readLine();
+        work.add(this);
     }
     
 }

@@ -19,26 +19,49 @@ public class Work implements Runnable{
     List<User> users = new ArrayList<>();
     boolean running = true;
     void add(User user){
-        users.add(user);
+        synchronized(users){
+            users.add(user);
+        }
     }
-
+    void remove(User user){
+        synchronized(users){
+            users.remove(user);
+        }
+    }
     @Override
     public void run(){
         try {
-            Thread.sleep(500);
             do{
+                Thread.sleep(500);
                 synchronized(users){
-                    for (int i = 0; i < users.size(); i++) {
-                        User user = users.get(i);
+                    for (User user : users) {
                         if(user.br.ready()){
-                            user.line = user.br.readLine();
-                            if(user.line.equals("stop")){running=false;}
-                            user.pw.println(user.name+" write: "+user.line);
+                            while(user.br.ready()){
+                               char c=(char)user.br.read();
+                                if(c =='\n'){
+                                   if("".equals(user.name)){
+                                        user.name = user.line;
+                                        user.line = "";
+                                        user.pw.println("Hello, "+user.name);
+                                    }else{
+                                       if(user.line.equals("stop")){
+                                           running=false;
+                                           user.pw.println(user.name+" by-by!");
+                                           this.remove(user);
+                                           break;
+                                       }else{
+                                           user.pw.println(user.name+" send: "+user.line);
+                                           user.line = "";
+                                       }
+                                    } 
+                                }else{
+                                    user.line += c;
+                                }
+                            }
                         }
                     }
                 }
             }while(running);
-           
         } catch (IOException ex) {
             Logger.getLogger(Work.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
