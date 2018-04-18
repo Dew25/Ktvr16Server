@@ -28,6 +28,13 @@ public class Work implements Runnable{
             users.remove(user);
         }
     }
+    void sentToAll(String text){
+        
+            for (User user : users) {
+                user.pw.println(text);
+            }
+        
+    }
     @Override
     public void run(){
         try {
@@ -37,20 +44,19 @@ public class Work implements Runnable{
                     for (User user : users) {
                         if(user.br.ready()){
                             while(user.br.ready()){
-                               char c=(char)user.br.read();
+                                char c=(char)user.br.read();
                                 if(c =='\n'){
                                    if("".equals(user.name)){
-                                        user.name = user.line;
+                                        user.name = user.line.trim();
                                         user.line = "";
-                                        user.pw.println("Hello, "+user.name);
+                                        sentToAll("Hello, "+user.name);
                                     }else{
-                                       if(user.line.equals("stop")){
-                                           running=false;
+                                       if("stop".equals(user.line)){
                                            user.pw.println(user.name+" by-by!");
                                            this.remove(user);
                                            break;
                                        }else{
-                                           user.pw.println(user.name+" send: "+user.line);
+                                           sentToAll(user.name+" send: "+user.line.trim());
                                            user.line = "";
                                        }
                                     } 
