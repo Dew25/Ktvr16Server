@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -29,7 +31,13 @@ public class User implements Runnable{
         this.work = work;
         this.pw = new PrintWriter(this.sc.getOutputStream(),true);
         this.br = new BufferedReader(new InputStreamReader(sc.getInputStream()));
-        new Thread(this).start();
+        Thread thUser = new Thread(this);
+        thUser.start();
+        try {
+            thUser.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, "User дал исключение", ex);
+        }
     }
 
     @Override

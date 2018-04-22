@@ -23,7 +23,8 @@ public class Ktvr16Server {
         ServerSocket ss=new ServerSocket(port);
         System.out.println("Server listen port "+ port);
         Work work = new Work();
-        new Thread(work).start();
+        Thread myWork =  new Thread(work,"work");
+        myWork.start();
         while(working){
             new User(ss.accept(),work);
         }
